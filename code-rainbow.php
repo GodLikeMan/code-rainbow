@@ -52,8 +52,10 @@
 					$("#damper-select").selectpicker('show');
 				}
 				else{$("#damper-select").selectpicker('hide');}
+				//save to cookie
+				$.cookie('selectedAccount',$('#account-select').val());
 				
-				
+				refreshListAjax();
 				
 			});
 			
@@ -68,9 +70,12 @@
 			function refreshList(json){
 				var	p = $.parseJSON(json);
 				
+				console.log(json);
+				console.log(p);
+				
 				str ="";
 				for(var i = 0 ; i < p['refreshed_list'].length ; i++){
-					file = 'alvoturk9000'+'/'+p['refreshed_list'][i].sku+'/'+p['refreshed_list'][i].name;
+					file = p['refreshed_list'][i].account+'/'+p['refreshed_list'][i].sku+'/'+p['refreshed_list'][i].name;
 				
 					var fDate = formatDate(p['refreshed_list'][i].last_modify_date*1000);
 

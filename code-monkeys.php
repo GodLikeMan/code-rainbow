@@ -13,9 +13,9 @@
 			$this->data = $post_data;
 		}
 		
-		public function refreshProductList($limit,$term){
+		public function refreshProductList($account,$limit,$term){
 			
-			$query = 'SELECT M.sku , P.name  , P.size , P.last_modify_date FROM Pictures as P INNER JOIN  Map_Picture_Product as M WHERE M.picture_id = P.id  AND P.name = "1.jpg" LIMIT '.$limit; 
+			$query = 'SELECT M.sku , M.account , P.name  , P.size , P.last_modify_date FROM Pictures as P INNER JOIN  Map_Picture_Product as M WHERE M.picture_id = P.id  AND P.name = "1.jpg" AND M.account = "'.$account.'" LIMIT '.$limit; 
 			$this->searchDB($query,'refreshed_list','This Sku not found on DB');		
 		}
 		
@@ -52,7 +52,7 @@
 		
 		public function monkeyWorks(){
 			if($this->works==='display_refresh'){
-				$this->refreshProductList($_POST['displayLimit'],$_POST['term']);
+				$this->refreshProductList($_POST['selectedAccount'],$_POST['displayLimit'],$_POST['term']);
 			}
 			else{echo json_encode(array('message' => 'ERROR', 'code' => $_POST['query']));	}
 			
