@@ -3,12 +3,16 @@
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-		<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.min.css">
+		<link rel="stylesheet" href="./lib/jquery.lazyloadxt.fadein.min.css">
+		<link rel="stylesheet" href="./lib/jquery.lazyloadxt.spinner.min.css">
+		<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
 		<script src="./lib/jquery.cookie-1.4.1.min.js"></script>
+		<script src="./lib/jquery.lazyloadxt.extra.min.js"></script>
+		
 		<script>
 		$(document).ready(function(){
 			/*init elements*/
@@ -40,6 +44,12 @@
 			//init items
 			refreshListAjax();
 			
+			//
+			$("#damper-select").on("change",function(){
+				$.cookie('term',$('#damper-select').val());
+				refreshListAjax();
+			});
+			
 			//	
 			$("#display-limit").on("change",function(){
 				$.cookie('displayLimit',$('#display-limit').val());
@@ -47,45 +57,74 @@
 			});
 			
 			$("#account-select").on("change",function(){
+			
+				//reset
+				$.removeCookie('term');
+				$.removeCookie('searchTerm');
+				$("#nav-search").trigger("reset");
+				
 				//Custom selecter process
 				if($("#account-select").val() == "alvoturk9000"){
 					$("#damper-select").selectpicker('show');
+					$.cookie('term',$('#damper-select').val());
 				}
 				else{$("#damper-select").selectpicker('hide');}
+				
 				//save to cookie
 				$.cookie('selectedAccount',$('#account-select').val());
+				
 				
 				refreshListAjax();
 				
 			});
 			
+			$("#nav-search").on('submit',function() {
+				event.preventDefault();
+				$.cookie('searchTerm',$('#search-term').val());
+				
+				refreshListAjax();
+				console.log($.cookie("searchTerm"));
+			});
+			
+			/*temp*/
+			$(window).on('ajaxComplete', function() {
+				setTimeout(function() {
+					$(window).lazyLoadXT();
+				}, 50);
+			});
+			
 			function refreshListAjax(){
-				$.post("code-monkeys.php",{'selectedAccount':$.cookie('selectedAccount'),'displayLimit':$.cookie('displayLimit'),'term':$.cookie('term'),'query':'display_refresh'}
+				$.post("code-monkeys.php",{'selectedAccount':$.cookie('selectedAccount'),'displayLimit':$.cookie('displayLimit'),'term':$.cookie('term'),'searchTerm':$.cookie('searchTerm'),'query':'display_refresh'}
 				).done(function(json){
+
 					refreshList(json);
-					console.log("refresh successed * "+"limit ="+$.cookie('displayLimit')+" term ="+$.cookie('term'));
 				});					
 			}
 			
 			function refreshList(json){
 				var	p = $.parseJSON(json);
 				
-				console.log(json);
-				console.log(p);
-				
-				str ="";
-				for(var i = 0 ; i < p['refreshed_list'].length ; i++){
-					file = p['refreshed_list'][i].account+'/'+p['refreshed_list'][i].sku+'/'+p['refreshed_list'][i].name;
-				
-					var fDate = formatDate(p['refreshed_list'][i].last_modify_date*1000);
-
-					str +=	'<div class="image-container">'+
-								'<img class="cover-image" src="http://sokietech.com/ebayimages/'+file+'"/>'+	
-								'<div class="image-folder-name"><span class="image-attribute">'+p['refreshed_list'][i].sku+'</span></div>'+
-								'<div class="image-attribute-row"><span class="image-attribute">'+Math.round(p['refreshed_list'][i].size/(1024))+' KB </span><span class="image-attribute">'+fDate+'</span></div>'+
-								'</div>';	
+				if(p['message']=='ERROR'){ 
+					console.log(p['code']);
+					proceedHtml = p['code'];
 				}
-				$(".content-wrapper").html(str);
+				else {
+					proceedHtml ="";
+					for(var i = 0 ; i < p['refreshed_list'].length ; i++){
+						file = p['refreshed_list'][i].account+'/'+p['refreshed_list'][i].sku+'/'+p['refreshed_list'][i].name;
+					
+						var fDate = formatDate(p['refreshed_list'][i].last_modify_date*1000);
+
+						proceedHtml +=	'<div class="image-container">'+
+									'<img class="cover-image lazy-loaded"  data-src="http://sokietech.com/ebayimages/'+file+'"/ >'+	
+									'<div class="image-folder-name"><span class="image-attribute">'+p['refreshed_list'][i].sku+'</span></div>'+
+									'<div class="image-attribute-row"><span class="image-attribute">'+Math.round(p['refreshed_list'][i].size/(1024))+' KB </span><span class="image-attribute">'+fDate+'</span></div>'+
+									'</div>';	
+					}
+					console.log("refresh successed * "+"limit ="+$.cookie('displayLimit')+" term ="+$.cookie('term'));					
+				}
+				
+				$(".content-wrapper").html(proceedHtml);
 			}
 			
 			function formatDate(timestamp){
@@ -107,6 +146,12 @@
 			*/
 			
 			body {font-family: 'Roboto', sans-serif;} 
+			#end-marker { clear : both ; float : left ;}
+			nav .form-control:focus { border-color : #7FDED1 ;  }
+			nav .form-control { color: #fff ; background-color: #6BD0BE;}
+			nav .form-control::-moz-placeholder {color: rgba(255,255,255,0.8);}
+			nav .form-control:-ms-input-placeholder {color: rgba(255,255,255,0.8);}
+			nav .form-control::-webkit-input-placeholder {color: rgba(255,255,255,0.8);}
 			
 			/*
 				button
@@ -167,19 +212,34 @@
 						<option>3amotor_com</option>
 						<option>d2_sport</option>
 					</select>
-					<select id="damper-select" class="selectpicker" data-width="20%"  data-style="btn-green">
-						<option data-subtext="Black Carbon Fiber" value="TEST">D1</option>
-						<option data-subtext="Black">D2</option>
-						<option data-subtext="Silver Carbon Fiber">D3</option>
-						<option data-subtext="White">D4</option>
-					</select>
 					<select id="display-limit" class="selectpicker" data-width="20%" data-style="btn-green">
 						<option >10</option>
 						<option>30</option>
 						<option>60</option>
 						<option>100</option>
 					</select>
-				</div>		
+					<select id="damper-select" class="selectpicker" data-width="20%"  data-style="btn-green">
+						<option data-subtext="Black Carbon Fiber" value="Black Carbon Fiber">D1</option>
+						<option data-subtext="Black" value="Black">D2</option>
+						<option data-subtext="Silver Carbon Fiber" value="Silver Carbon Fiber">D3</option>
+						<option data-subtext="White" value="White">D4</option>
+					</select>	
+
+					<div class="col-sm-3 col-md-3 pull-right">
+						<form id="nav-search" class="navbar-form" role="search">
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="Search" name="search-term" id="search-term">
+								<div class="input-group-btn">
+									<button class="btn btn-green" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+								</div>
+							</div>
+						</form>
+					</div>
+					
+				</div>
+				
+
+		
 			</div>
 		</nav>
 		<div class="container content-wrapper">
@@ -207,5 +267,6 @@
 		*/
 		?>
 		</div>
+		<div id="end-marker"></div>
 	</body>
 </html>
