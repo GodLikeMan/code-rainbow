@@ -31,6 +31,7 @@
 			//reset cookies
 			$.removeCookie('displayLimit');
 			$.removeCookie('term');
+			$.removeCookie('searchTerm');
 			$.removeCookie('selectedAccount');
 			
 			//save configs to cookie 
@@ -78,12 +79,14 @@
 				
 			});
 			
-			$("#nav-search").on('submit',function() {
+			$("#nav-search").on('submit',function(event) {
 				event.preventDefault();
 				$.cookie('searchTerm',$('#search-term').val());
 				
 				refreshListAjax();
 				console.log($.cookie("searchTerm"));
+				return false;
+	
 			});
 			
 			/*temp*/
