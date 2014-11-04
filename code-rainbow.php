@@ -15,39 +15,85 @@
 		
 		<script>
 		$(document).ready(function(){
+		
 			/*init elements*/
-			//select picker
-			if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
-				$('.selectpicker').selectpicker('mobile');
-				console.log("mobile mode");
+			function initializer(){
+			
+				//reset cookies
+				$.removeCookie('displayLimit');
+				$.removeCookie('category');
+				$.removeCookie('searchTag');
+				$.removeCookie('selectedAccount');
+				
+				//save configs to cookie 
+				$.cookie('displayLimit',$('#display-limit').val());
+				$.cookie('selectedAccount',$('#account-select').val());
+				
+				
+				//init items
+				refreshCategorySelector();
+				refreshListAjax();
 			}
-			else{
-				$('.selectpicker').selectpicker();
-				console.log("Desktop mode");
+
+			
+			function refreshCategorySelector(){
+			
+				$('#category-select').empty();
+				
+				$.post("code-monkeys.php",{'selectedAccount':$.cookie('selectedAccount'),'query':'get_category'}
+				).done(function(json){
+					var	p = $.parseJSON(json);
+					
+					if(p['message']=='ERROR'){ 
+						$('#category-select').selectpicker('hide');
+						console.log(p['code']);
+					}
+					else {
+						$('#category-select').append('<option value="all">All Category</option>');
+						
+						if($("#account-select").val() == "alvoturk9000"){
+								$('#category-select').append('<option data-subtext="Black Carbon Fiber" value="Black Carbon Fiber">D1</option>'+
+																						'<option data-subtext="Black" value="Black">D2</option>'+
+																						'<option data-subtext="Silver Carbon Fiber" value="Silver Carbon Fiber">D3</option>'+
+																						'<option data-subtext="White" value="White">D4</option>');
+						}
+						else{
+							for(var i = 0;i<p['category_list'].length;i++){
+								console.log(p['category_list'][i][0]);
+								$('#category-select').append('<option>'+p['category_list'][i][0]+'</option>');
+							}							
+						}
+						
+						$('#category-select').selectpicker('refresh');
+						$('#category-select').selectpicker('show');
+						$.cookie('category',$('#category-select').val());
+					}
+					
+				});				
+				
+				//select picker
+				if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+					$('.selectpicker').selectpicker('mobile');
+					console.log("mobile mode");
+				}
+				else{
+					$('.selectpicker').selectpicker();
+					console.log("Desktop mode");
+				}
+				$('.selectpicker').selectpicker('setStyle', 'btn-lg', 'add');
 			}
-			
-			$('.selectpicker').selectpicker('setStyle', 'btn-lg', 'add');
-			
-			//reset cookies
-			$.removeCookie('displayLimit');
-			$.removeCookie('term');
-			$.removeCookie('searchTerm');
-			$.removeCookie('selectedAccount');
-			
-			//save configs to cookie 
-			$.cookie('displayLimit',$('#display-limit').val());
-			console.log('init limit '+$.cookie('displayLimit'));
-			$.cookie('term',$('#damper-select').val());
-			console.log('init term '+$.cookie('term'));
-			$.cookie('selectedAccount',$('#account-select').val());
-			console.log('init account '+$.cookie('selectedAccount'));
-			
-			//init items
-			refreshListAjax();
 			
 			//
-			$("#damper-select").on("change",function(){
-				$.cookie('term',$('#damper-select').val());
+			$("#category-select").on("change",function(){
+				if($.cookie('selectedAccount') == "alvoturk9000"){
+					$.cookie('category','all');
+					$.cookie('searchTag',$("#category-select").val());
+				}
+				else{
+					$.cookie('category',$('#category-select').val());
+					console.log($.cookie('category'));
+				}
+				
 				refreshListAjax();
 			});
 			
@@ -60,31 +106,25 @@
 			$("#account-select").on("change",function(){
 			
 				//reset
-				$.removeCookie('term');
-				$.removeCookie('searchTerm');
+				$.removeCookie('category');
+				$.removeCookie('searchTag');
 				$("#nav-search").trigger("reset");
-				
-				//Custom selecter process
-				if($("#account-select").val() == "alvoturk9000"){
-					$("#damper-select").selectpicker('show');
-					$.cookie('term',$('#damper-select').val());
-				}
-				else{$("#damper-select").selectpicker('hide');}
 				
 				//save to cookie
 				$.cookie('selectedAccount',$('#account-select').val());
+				$.cookie('category',"all");
 				
 				
+				refreshCategorySelector();
 				refreshListAjax();
-				
 			});
 			
 			$("#nav-search").on('submit',function(event) {
 				event.preventDefault();
-				$.cookie('searchTerm',$('#search-term').val());
+				$.cookie('searchTag',$('#search-tag').val());
 				
 				refreshListAjax();
-				console.log($.cookie("searchTerm"));
+				console.log($.cookie("searchTag"));
 				return false;
 	
 			});
@@ -97,19 +137,20 @@
 			});
 			
 			function refreshListAjax(){
-				$.post("code-monkeys.php",{'selectedAccount':$.cookie('selectedAccount'),'displayLimit':$.cookie('displayLimit'),'term':$.cookie('term'),'searchTerm':$.cookie('searchTerm'),'query':'display_refresh'}
+				console.log("args in refreshListAjax : "+$.cookie('selectedAccount')+"/"+$.cookie('category') );
+				$.post("code-monkeys.php",{'selectedAccount':$.cookie('selectedAccount'),'displayLimit':$.cookie('displayLimit'),'category':$.cookie('category'),'searchTag':$.cookie('searchTag'),'query':'display_refresh'}
 				).done(function(json){
-
 					refreshList(json);
 				});					
 			}
 			
 			function refreshList(json){
+				console.log(json);
 				var	p = $.parseJSON(json);
 				
 				if(p['message']=='ERROR'){ 
 					console.log(p['code']);
-					proceedHtml = p['code'];
+					proceedHtml = '<h1 class="warning">'+p['code']+'</h1>';
 				}
 				else {
 					proceedHtml ="";
@@ -124,7 +165,7 @@
 									'<div class="image-attribute-row"><span class="image-attribute">'+Math.round(p['refreshed_list'][i].size/(1024))+' KB </span><span class="image-attribute">'+fDate+'</span></div>'+
 									'</div>';	
 					}
-					console.log("refresh successed * "+"limit ="+$.cookie('displayLimit')+" term ="+$.cookie('term'));					
+					console.log("Refresh successed * "+"Limit ="+$.cookie('displayLimit')+" Category ="+$.cookie('category')+" Tag ="+$.cookie("searchTag"));					
 				}
 				
 				$(".content-wrapper").html(proceedHtml);
@@ -140,6 +181,8 @@
 				return  m+' '+d+' '+y;
 			}
 			
+			initializer();
+			
 		});
 		</script>
 		<style>
@@ -148,8 +191,9 @@
 				#6BD0BE green 
 			*/
 			
-			body {font-family: 'Roboto', sans-serif;} 
+			body { font-family : 'Roboto', sans-serif ; background : #ebebeb ;} 
 			#end-marker { clear : both ; float : left ;}
+			.warning { text-align : center ;}
 			nav .form-control:focus { border-color : #7FDED1 ;  }
 			nav .form-control { color: #fff ; background-color: #6BD0BE;}
 			nav .form-control::-moz-placeholder {color: rgba(255,255,255,0.8);}
@@ -221,17 +265,15 @@
 						<option>60</option>
 						<option>100</option>
 					</select>
-					<select id="damper-select" class="selectpicker" data-width="20%"  data-style="btn-green">
-						<option data-subtext="Black Carbon Fiber" value="Black Carbon Fiber">D1</option>
-						<option data-subtext="Black" value="Black">D2</option>
-						<option data-subtext="Silver Carbon Fiber" value="Silver Carbon Fiber">D3</option>
-						<option data-subtext="White" value="White">D4</option>
-					</select>	
 
+					
+					<select id="category-select" class="selectpicker" data-width="20%"  data-style="btn-green">
+					</select>	
+					
 					<div class="col-sm-3 col-md-3 pull-right">
 						<form id="nav-search" class="navbar-form" role="search">
 							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Search" name="search-term" id="search-term">
+								<input type="text" class="form-control" placeholder="Search" name="search-tag" id="search-tag" required>
 								<div class="input-group-btn">
 									<button class="btn btn-green" type="submit"><i class="glyphicon glyphicon-search"></i></button>
 								</div>
