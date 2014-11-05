@@ -2,13 +2,15 @@
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.min.css">
 		<link rel="stylesheet" href="./lib/jquery.lazyloadxt.fadein.min.css">
 		<link rel="stylesheet" href="./lib/jquery.lazyloadxt.spinner.min.css">
 		<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
 		<script src="./lib/jquery.cookie-1.4.1.min.js"></script>
 		<script src="./lib/jquery.lazyloadxt.extra.min.js"></script>
@@ -136,6 +138,10 @@
 				}, 50);
 			});
 			
+			function getTagCloud(){
+				return '<div id ="tag-cloud"><h4><span class="label label-info">black</span></h4><h4><span class="label label-info">test</span></h4><h4><span class="label label-info">test2</span></h4></div>';
+			}
+			
 			function refreshListAjax(){
 				console.log("args in refreshListAjax : "+$.cookie('selectedAccount')+"/"+$.cookie('category') );
 				$.post("code-monkeys.php",{'selectedAccount':$.cookie('selectedAccount'),'displayLimit':$.cookie('displayLimit'),'category':$.cookie('category'),'searchTag':$.cookie('searchTag'),'query':'display_refresh'}
@@ -147,13 +153,14 @@
 			function refreshList(json){
 				console.log(json);
 				var	p = $.parseJSON(json);
+				proceedHtml ="";
 				
 				if(p['message']=='ERROR'){ 
 					console.log(p['code']);
 					proceedHtml = '<h1 class="warning">'+p['code']+'</h1>';
 				}
 				else {
-					proceedHtml ="";
+					proceedHtml = getTagCloud();
 					for(var i = 0 ; i < p['refreshed_list'].length ; i++){
 						file = p['refreshed_list'][i].account+'/'+p['refreshed_list'][i].sku+'/'+p['refreshed_list'][i].name;
 					
@@ -199,6 +206,9 @@
 			nav .form-control::-moz-placeholder {color: rgba(255,255,255,0.8);}
 			nav .form-control:-ms-input-placeholder {color: rgba(255,255,255,0.8);}
 			nav .form-control::-webkit-input-placeholder {color: rgba(255,255,255,0.8);}
+			#nav-search  input { display : inline-block ;} 
+			#tag-cloud {  text-transform : capitalize ;}
+			#tag-cloud h4 {  display : inline-block ; margin-right : 5px ;}
 			
 			/*
 				button
@@ -235,11 +245,11 @@
 			.navbar-inner { padding : 5px 0; }
 			.content-wrapper { margin-top : 65px; }
 			.navbar-nav .bootstrap-select { margin-bottom : 0px ; margin-top : 8px ;} 
-			.image-container {margin:9px 9px 0 9px;padding:0;width : 15% ;float:left ; display:inline-block;}
+			.image-container {margin:10px 10px 5px 0px;padding:0;width : 19% ;float:left ; display:inline-block;}
 			.image-attribute {margin-left : 15px; }
 			.image-folder-name , .image-attribute-row {background : #6BD0BE ;color : white;  display:block; text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
 			.image-folder-name { font-size : 18px; text-transform: uppercase ;}
-			.image-attribute-row  { font-size : 15px ; margin-bottom:15px;}
+			.image-attribute-row  { font-size : 15px ; }
 			.cover-image { width:100% ; height : 200px ; margin : 0 auto;}
 			@media screen and (max-width: 767px) {
 				/* 如果使用者之視窗寬度 小於等於 768px，將會再載入這裡的 CSS。    */
@@ -264,30 +274,20 @@
 						<option>30</option>
 						<option>60</option>
 						<option>100</option>
+						<option value="all">Unlimited</option>
 					</select>
-
-					
-					<select id="category-select" class="selectpicker" data-width="20%"  data-style="btn-green">
-					</select>	
-					
-					<div class="col-sm-3 col-md-3 pull-right">
-						<form id="nav-search" class="navbar-form" role="search">
-							<div class="input-group">
-								<input type="text" class="form-control" placeholder="Search" name="search-tag" id="search-tag" required>
-								<div class="input-group-btn">
-									<button class="btn btn-green" type="submit"><i class="glyphicon glyphicon-search"></i></button>
-								</div>
-							</div>
-						</form>
-					</div>
-					
+					<select id="category-select" class="selectpicker" data-width="20%"  data-style="btn-green"></select>	
+					<form id="nav-search" class="navbar-form navbar-right" role="search">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="Search" name="search-tag" id="search-tag" required>
+						</div>
+						<button class="btn btn-green hidden-xs" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+					</form>
 				</div>
-				
-
-		
 			</div>
 		</nav>
 		<div class="container content-wrapper">
+
 		<?php
 			/*
 			$limit = 10;

@@ -23,13 +23,18 @@
 				$filter2 = ' AND MP.sku IN (SELECT MT.sku FROM Tags AS T INNER JOIN Map_Tag_Product AS MT 
 												ON T.id = MT.tag_id AND T.data = "'.$searchTag.'" COLLATE NOCASE) ';
 			}
+			$finalFilter ="";
+			if($limit!="all"){
+			$finalFilter  = ' ORDER BY MP.sku ASC LIMIT '.$limit.' COLLATE NOCASE'; 
+			}
+			
 			$query = 'SELECT MP.sku , MP.account , P.name  , P.size , P.last_modify_date FROM Pictures AS P
 								INNER JOIN  Map_Picture_Product AS MP 
 								ON MP.picture_id = P.id  
 								AND P.name = "1.jpg" 
 								AND MP.account = "'.$account.'" '
-								.$filter.$filter2.
-								' ORDER BY MP.sku ASC LIMIT '.$limit.' COLLATE NOCASE'; 
+								.$filter.$filter2.$finalFilter;
+								
 			$this->searchDB($query,'refreshed_list',"No Matched Items");		
 		}
 		
