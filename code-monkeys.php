@@ -25,7 +25,7 @@
 			}
 			$finalFilter ="";
 			if($limit!="all"){
-				$finalFilter  = ' ORDER BY MP.sku ASC  COLLATE NOCASE LIMIT '.$limit; 
+				$finalFilter  = ' ORDER BY MP.sku ASC LIMIT '.$limit.' COLLATE NOCASE'; 
 			}
 			
 			$query = 'SELECT MP.sku , MP.account , P.name  , P.size , P.last_modify_date FROM Pictures AS P
@@ -44,9 +44,10 @@
 			$this->searchDB($query,'category_list','No Category');
 		}
 		
+		
 		public function getTagCloud(){
 			$query ='SELECT DiSTINCT T.data,T.id FROM Products AS Pro ,Tags AS T
-WHERE Pro.category = "Sokie Tech Damper" COLLATE NOCASE limit 10 ';
+								WHERE Pro.category = "Sokie Tech Damper" COLLATE NOCASE limit 10 ';
 
 			$this->searchDB($query,'tag_cloud','Not found any tags !');
 		}
