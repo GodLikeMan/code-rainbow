@@ -21,11 +21,11 @@
 			$filter2 = "";
 			if(($searchTag != "NULL")&&($searchTag != "")){
 				$filter2 = ' AND MP.sku IN (SELECT MT.sku FROM Tags AS T INNER JOIN Map_Tag_Product AS MT 
-												ON T.id = MT.tag_id AND T.data = "'.$searchTag.'" COLLATE NOCASE) ';
+									ON T.id = MT.tag_id AND T.data = "'.$searchTag.'" COLLATE NOCASE) ';
 			}
 			$finalFilter ="";
 			if($limit!="all"){
-			$finalFilter  = ' ORDER BY MP.sku ASC LIMIT '.$limit.' COLLATE NOCASE'; 
+				$finalFilter  = ' ORDER BY MP.sku ASC  COLLATE NOCASE LIMIT '.$limit; 
 			}
 			
 			$query = 'SELECT MP.sku , MP.account , P.name  , P.size , P.last_modify_date FROM Pictures AS P
@@ -42,6 +42,13 @@
 			$query = 'SELECT DISTINCT P.category FROM Products AS P INNER JOIN  Map_Picture_Product AS MP 
 								ON P.sku = MP.sku AND MP.account = "'.$account.'"';
 			$this->searchDB($query,'category_list','No Category');
+		}
+		
+		public function getTagCloud(){
+			$query ='SELECT DiSTINCT T.data,T.id FROM Products AS Pro ,Tags AS T
+WHERE Pro.category = "Sokie Tech Damper" COLLATE NOCASE limit 10 ';
+
+			$this->searchDB($query,'tag_cloud','Not found any tags !');
 		}
 		
 		public function saveToDB($query,$array_key,$error_msg){
@@ -63,14 +70,12 @@
 			if($result->fetchArray()){
 				$i = 0;
 				$result->reset();
-				while($row = $result->fetchArray()){
+				while($row = $result->fetchArray()) {
 					$this->info[$array_key][$i] =$row;
 					$i++;
 				}
 			}
 			else{ if($error_msg!=false) die( json_encode(array('message' => 'ERROR', 'code' => $error_msg))); }
-	
-			
 		}
 		
 		public function searchDBDebug($query,$array_key,$error_msg){
