@@ -35,15 +35,23 @@
 				//init items
 				refreshCategorySelector();
 				refreshListAjax();
+				
+				/*temp*/
+				$(window).on('ajaxComplete', function() {
+					setTimeout(function() {
+						$(window).lazyLoadXT();
+					}, 50);
+				});
 			}
-
 			
 			function refreshCategorySelector(){
 			
 				$('#category-select').empty();
-				
-				$.post("code-monkeys.php",{'selectedAccount':$.cookie('selectedAccount'),'query':'get_category'}
-				).done(function(json){
+				$.ajax({	type :	'POST',
+								url	:	"code-monkeys.php",
+								async : false,
+								data : {'selectedAccount':$.cookie('selectedAccount'),'query':'get_category'}
+				}).done(function(json){
 					var	p = $.parseJSON(json);
 					
 					if(p['message']=='ERROR'){ 
@@ -68,9 +76,14 @@
 						
 						$('#category-select').selectpicker('refresh');
 						$('#category-select').selectpicker('show');
-						$.cookie('category',$('#category-select').val());
+						
+						if($("#account-select").val() == "alvoturk9000"){
+							$.cookie('category',"sokie tech damper");
+						}
+						else{
+							$.cookie('category',$('#category-select').val());
+						}
 					}
-					
 				});				
 				
 				//select picker
@@ -88,8 +101,13 @@
 			//
 			$("#category-select").on("change",function(){
 				if($.cookie('selectedAccount') == "alvoturk9000"){
-					$.cookie('category','all');
-					$.cookie('searchTag',$("#category-select").val());
+					
+					$.cookie('category','sokie tech damper');
+					
+					if($("#category-select").val()!="all"){
+						$.cookie('searchTag',$("#category-select").val());
+					}
+					else{ $.cookie('searchTag',""); }
 				}
 				else{
 					$.cookie('category',$('#category-select').val());
@@ -131,36 +149,70 @@
 	
 			});
 			
-			/*temp*/
-			$(window).on('ajaxComplete', function() {
-				setTimeout(function() {
-					$(window).lazyLoadXT();
-				}, 50);
-			});
-			
-			function getTagCloud(){
-				return '<div id ="tag-cloud"><h4><span class="label label-info">black</span></h4><h4><span class="label label-info">test</span></h4><h4><span class="label label-info">test2</span></h4></div>';
+			function initTagCloudAjax(){
+				$.ajax({	type :	'POST',
+								url	:	"code-monkeys.php",
+								async : false,
+								data : {'selectedAccount':$.cookie('selectedAccount'),'category':$.cookie('category'),'query':'get_tag_cloud'},
+				}).done(function (json) {
+						//console.log(json);
+						createTagCloud(json);
+					});
 			}
 			
+			function createTagCloud(json){
+				
+				var	p = $.parseJSON(json);
+				var  tagCloudHTML ="";
+				
+				if(p['message']=='ERROR'){ 
+					console.log(p['code']);
+					tagCloudHTML = '<h1 class="warning">'+p['code']+'</h1>';
+				}
+				else {
+					tagCloudHTML = '<div id ="tag-cloud">';
+					
+					for(var i = 0;i<p['tag_cloud'].length;i++){
+						tagCloudHTML += '<h4><span class="label label-info" data-tag-id="'+p['tag_cloud'][i].id+'">'+ p['tag_cloud'][i].data+'</span></h4>' ;
+					}
+					
+					tagCloudHTML += '</div>';
+				}	
+				$(".content-wrapper").append(tagCloudHTML);
+				
+				$("#tag-cloud .label").on('click',function(){
+					$("#search-tag").val($(this).html()).submit();
+					console.log($(this).html());
+				});
+			}
+				
+			
 			function refreshListAjax(){
-				console.log("args in refreshListAjax : "+$.cookie('selectedAccount')+"/"+$.cookie('category') );
-				$.post("code-monkeys.php",{'selectedAccount':$.cookie('selectedAccount'),'displayLimit':$.cookie('displayLimit'),'category':$.cookie('category'),'searchTag':$.cookie('searchTag'),'query':'display_refresh'}
-				).done(function(json){
+				console.log("refreshListAjax   : "+"/selectedAccount/-> "+$.cookie('selectedAccount')+" /category/-> "+$.cookie('category')+" /searchTag/->"+$.cookie("searchTag")+" /limit/->"+$.cookie("displayLimit"));
+				$.ajax({	type :	'POST',
+								url	:	"code-monkeys.php",
+								async : false,
+								data : {'selectedAccount':$.cookie('selectedAccount'),'displayLimit':$.cookie('displayLimit'),'category':$.cookie('category'),'searchTag':$.cookie('searchTag'),'query':'display_refresh'}
+				}).done(function(json){
 					refreshList(json);
 				});					
 			}
 			
 			function refreshList(json){
-				console.log(json);
+				//console.log(json);
 				var	p = $.parseJSON(json);
 				proceedHtml ="";
+				$(".content-wrapper").empty();
 				
 				if(p['message']=='ERROR'){ 
 					console.log(p['code']);
 					proceedHtml = '<h1 class="warning">'+p['code']+'</h1>';
 				}
 				else {
-					proceedHtml = getTagCloud();
+					console.log(p['refreshed_list'].length+" items");
+					
+					initTagCloudAjax();
+					
 					for(var i = 0 ; i < p['refreshed_list'].length ; i++){
 						file = p['refreshed_list'][i].account+'/'+p['refreshed_list'][i].sku+'/'+p['refreshed_list'][i].name;
 					
@@ -172,10 +224,10 @@
 									'<div class="image-attribute-row"><span class="image-attribute">'+Math.round(p['refreshed_list'][i].size/(1024))+' KB </span><span class="image-attribute">'+fDate+'</span></div>'+
 									'</div>';	
 					}
-					console.log("Refresh successed * "+"Limit ="+$.cookie('displayLimit')+" Category ="+$.cookie('category')+" Tag ="+$.cookie("searchTag"));					
+					console.log("Refresh successed : "+"/selectedAccount/-> "+$.cookie('selectedAccount')+" /category/-> "+$.cookie('category')+" /searchTag/->"+$.cookie("searchTag")+" /limit/->"+$.cookie("displayLimit"));					
 				}
 				
-				$(".content-wrapper").html(proceedHtml);
+				$(".content-wrapper").append(proceedHtml);
 			}
 			
 			function formatDate(timestamp){
@@ -255,7 +307,8 @@
 				/* 如果使用者之視窗寬度 小於等於 768px，將會再載入這裡的 CSS。    */
 				.cover-image {height:auto;}
 				.image-container ,.content-wrapper {width : 100% ;}
-				.image-container { margin : 0;}
+				.content-wrapper { margin-top : 132px ;}
+				.image-container { margin : 0 ;}
 				navbar .bootstrap-select.btn-group:not(.input-group-btn), .bootstrap-select.btn-group[class*=span], .bootstrap-select.btn-group[class*=col-] { margin : 0 auto;}
 			}
 		</style>

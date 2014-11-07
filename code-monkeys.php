@@ -40,14 +40,17 @@
 		
 		public function getCategoryFromAccount($account){
 			$query = 'SELECT DISTINCT P.category FROM Products AS P INNER JOIN  Map_Picture_Product AS MP 
-								ON P.sku = MP.sku AND MP.account = "'.$account.'"';
+								ON P.sku = MP.sku AND MP.account = "'.$account.'" COLLATE NOCASE';
 			$this->searchDB($query,'category_list','No Category');
 		}
 		
 		
-		public function getTagCloud(){
-			$query ='SELECT DiSTINCT T.data,T.id FROM Products AS Pro ,Tags AS T
-								WHERE Pro.category = "Sokie Tech Damper" COLLATE NOCASE limit 10 ';
+		public function getTagCloud($category){
+			$ca ="";
+			if($category!="all"){
+				$ca = 'WHERE Pro.category = "'.$category.'"  COLLATE NOCASE';
+			}
+			$query ='SELECT DiSTINCT T.data,T.id FROM Products AS Pro ,Tags AS T '.$ca.' ORDER BY RANDOM() LIMIT 10 ';
 
 			$this->searchDB($query,'tag_cloud','Not found any tags !');
 		}
@@ -76,7 +79,7 @@
 					$i++;
 				}
 			}
-			else{ if($error_msg!=false) die( json_encode(array('message' => 'ERROR', 'code' => $error_msg))); }
+			else{ if($error_msg!=false) die( json_encode(array('message' => 'ERROR', 'code' =>$error_msg))); }
 		}
 		
 		public function searchDBDebug($query,$array_key,$error_msg){
@@ -101,6 +104,9 @@
 			}
 			else if($this->works==='get_category'){
 				$this->getCategoryFromAccount($_POST['selectedAccount']);
+			}
+			else if($this->works === 'get_tag_cloud'){
+				$this->getTagCloud($_POST['category']);
 			}
 			else{echo json_encode(array('message' => 'ERROR', 'code' => $_POST['query']));	}
 			
