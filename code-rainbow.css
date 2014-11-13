@@ -5,7 +5,6 @@
 	*/
 	
 	body { font-family : 'Roboto', sans-serif ; background : #ebebeb ;} 
-	#end-marker { clear : both ; float : left ;}
 	.warning { text-align : center ;}
 	nav .form-control:focus { border-color : #7FDED1 ;  }
 	nav .form-control { color: #fff ; background-color: #6BD0BE;}

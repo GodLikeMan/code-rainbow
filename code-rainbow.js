@@ -212,4 +212,32 @@ $(document).ready(function(){
 
 	});
 	
+	//trigger the edit area
+	$("#item-display").on('click','.image-container',function() {
+    	
+        BootstrapDialog.show({
+			title:"Will generate the new edit area",
+            closable: true,
+            closeByBackdrop: false,
+            closeByKeyboard: false,
+            message: function(dialog) {
+                var $message = $('<div></div>');
+                var pageToLoad = dialog.getData('pageToLoad');
+                $message.load(pageToLoad);
+        
+                return $message;
+            },
+            data: {
+                'pageToLoad': 'editItem.php'
+            }
+        });
+		/*
+            .setTitle('Dialog instance 3')
+            .setMessage('Hi Everybody!')
+            .setType(BootstrapDialog.TYPE_INFO)
+		*/
+
+		console.log("oooo");
+	});
+	
 });

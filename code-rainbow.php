@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="./lib/bootstrap-dialog.min.css">
 		<link rel="stylesheet" href="code-rainbow.css">
 		<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
 		<script src="./lib/jquery.cookie-1.4.1.min.js"></script>
 		<script src="./lib/jquery.lazyloadxt.extra.min.js"></script>
@@ -49,7 +49,6 @@
 			<div id ="tag-cloud"></div>
 			<div id="item-display"></div>
 		</div>
-		<div id="end-marker"></div>
-		<script defer>initializer();</script>
+		<script >initializer();</script>
 	</body>
 </html>
