@@ -50,7 +50,7 @@
 	.navbar-inner { padding : 5px 0; }
 	.content-wrapper { margin-top : 65px; }
 	.navbar-nav .bootstrap-select { margin-bottom : 0px ; margin-top : 8px ;} 
-	.image-container {margin:10px 10px 5px 0px;padding:0;width : 19% ;float:left ; display:inline-block;}
+	.image-container {margin:10px 0px;padding:1px;float:left ; display:inline-block;}
 	.image-attribute {margin-left : 15px; }
 	.image-folder-name , .image-attribute-row {background : #6BD0BE ;color : white;  display:block; text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
 	.image-folder-name { font-size : 18px; text-transform: uppercase ;}
@@ -59,9 +59,7 @@
 	@media screen and (max-width: 767px) {
 		/* 如果使用者之視窗寬度 小於等於 768px，將會再載入這裡的 CSS。    */
 		.cover-image {height:auto;}
-		.image-container ,.content-wrapper {width : 100% ;}
-		.content-wrapper { margin-top : 132px ;}
-		.image-container { margin : 0 ;}
+		.content-wrapper {width : 100% ; margin-top : 132px ;}
 		navbar .bootstrap-select.btn-group:not(.input-group-btn), .bootstrap-select.btn-group[class*=span], .bootstrap-select.btn-group[class*=col-] { margin : 0 auto;}
 	}
 </style>

@@ -28,8 +28,8 @@ function refreshList(json){
 			file = p['refreshed_list'][i].account+'/'+p['refreshed_list'][i].sku+'/'+p['refreshed_list'][i].name;
 		
 			var fDate = formatDate(p['refreshed_list'][i].last_modify_date*1000);
-
-			proceedHtml +=	'<a class="test" href="editItem.php?test=ok"><div class="image-container">'+
+			var editItemHref = 'editItem.php?test=ok&sku='+p['refreshed_list'][i].sku+'&account='+$.cookie("selectedAccount")+'&category='+$.cookie('category')+'&searchTag='+$.cookie('searchTag');
+			proceedHtml +=	'<a class="editItemAjax" href="'+editItemHref+'"><div class="image-container col-xs-12  col-sm-3 col-md-2">'+
 						'<img class="cover-image lazy"  data-original="http://sokietech.com/ebayimages/'+file+'"/ >'+	
 						'<div class="image-folder-name"><span class="image-attribute">'+p['refreshed_list'][i].sku+'</span></div>'+
 						'<div class="image-attribute-row"><span class="image-attribute">'+Math.round(p['refreshed_list'][i].size/(1024))+' KB </span><span class="image-attribute">'+fDate+'</span></div>'+
@@ -44,9 +44,9 @@ function refreshList(json){
 		event: "scrollstop"
 	});
 	
-	$(".test").magnificPopup({/*
+	$(".editItemAjax").magnificPopup({/*
 		items:{src:'editItem.php?test=ok'},type:'iframe'*/
-		type:'iframe'
+		type:'ajax'
 	});
 }	
 
