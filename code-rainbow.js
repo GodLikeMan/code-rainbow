@@ -29,17 +29,25 @@ function refreshList(json){
 		
 			var fDate = formatDate(p['refreshed_list'][i].last_modify_date*1000);
 
-			proceedHtml +=	'<div class="image-container">'+
-						'<img class="cover-image lazy-loaded"  data-src="http://sokietech.com/ebayimages/'+file+'"/ >'+	
+			proceedHtml +=	'<a class="test" href="editItem.php?test=ok"><div class="image-container">'+
+						'<img class="cover-image lazy"  data-original="http://sokietech.com/ebayimages/'+file+'"/ >'+	
 						'<div class="image-folder-name"><span class="image-attribute">'+p['refreshed_list'][i].sku+'</span></div>'+
 						'<div class="image-attribute-row"><span class="image-attribute">'+Math.round(p['refreshed_list'][i].size/(1024))+' KB </span><span class="image-attribute">'+fDate+'</span></div>'+
-						'</div>';	
+						'</div></a>';	
 		}
 		console.log("Refresh successed : "+"/selectedAccount/-> "+$.cookie('selectedAccount')+" /category/-> "+$.cookie('category')+" /searchTag/->"+$.cookie("searchTag")+" /limit/->"+$.cookie("displayLimit"));					
 	}
 	
 	$("#item-display").html(proceedHtml);
-	$(window).lazyLoadXT();
+	$("img.lazy").lazyload({
+		effect: "fadeIn",
+		event: "scrollstop"
+	});
+	
+	$(".test").magnificPopup({/*
+		items:{src:'editItem.php?test=ok'},type:'iframe'*/
+		type:'iframe'
+	});
 }	
 
 function initTagCloudAjax(){
@@ -211,33 +219,13 @@ $(document).ready(function(){
 		return false;
 
 	});
-	
+	/*
 	//trigger the edit area
 	$("#item-display").on('click','.image-container',function() {
-    	
-        BootstrapDialog.show({
-			title:"Will generate the new edit area",
-            closable: true,
-            closeByBackdrop: false,
-            closeByKeyboard: false,
-            message: function(dialog) {
-                var $message = $('<div></div>');
-                var pageToLoad = dialog.getData('pageToLoad');
-                $message.load(pageToLoad);
-        
-                return $message;
-            },
-            data: {
-                'pageToLoad': 'editItem.php'
-            }
-        });
-		/*
-            .setTitle('Dialog instance 3')
-            .setMessage('Hi Everybody!')
-            .setType(BootstrapDialog.TYPE_INFO)
-		*/
-
 		console.log("oooo");
 	});
+	
+	*/
+
 	
 });

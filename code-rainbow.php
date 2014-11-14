@@ -5,18 +5,17 @@
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.min.css">
-		<link rel="stylesheet" href="./lib/jquery.lazyloadxt.fadein.min.css">
-		<link rel="stylesheet" href="./lib/jquery.lazyloadxt.spinner.min.css">
-		<link rel="stylesheet" href="./lib/bootstrap-dialog.min.css">
+		<link rel="stylesheet" href="./lib/magnific-popup.css">
 		<link rel="stylesheet" href="code-rainbow.css">
 		<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
 		<script src="./lib/jquery.cookie-1.4.1.min.js"></script>
-		<script src="./lib/jquery.lazyloadxt.extra.min.js"></script>
-		<script src="./lib/bootstrap-dialog.min.js"></script>
+		<script src="./lib/jquery.scrollstop.min.js"></script>
+		<script src="./lib/jquery.lazyload.min.js"></script>
+		<script src="./lib/jquery.magnific-popup.min.js"></script>
 		<script src="code-rainbow.js"></script>
 	</head>
 	<body>
