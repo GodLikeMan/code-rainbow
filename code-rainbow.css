@@ -14,6 +14,10 @@
 	#nav-search  input { display : inline-block ;} 
 	#tag-cloud {  text-transform : capitalize ;}
 	#tag-cloud h4 {  display : inline-block ; margin-right : 5px ; cursor : pointer ;}
+	.product-tag { margin-left : 10px ;}
+	.product-picture { margin-top : 10px ;} 
+	.mfp-close-btn-in .mfp-close { color : red ; }
+	.mfp-close { float : right ; position : inherit ; font-size : 44px ; width : 35px ; height : 35px ; line-height : 35px ;} 
 	
 	/*
 		button

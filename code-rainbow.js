@@ -46,7 +46,11 @@ function refreshList(json){
 	
 	$(".editItemAjax").magnificPopup({/*
 		items:{src:'editItem.php?test=ok'},type:'iframe'*/
-		type:'ajax'
+		type:'ajax',
+		enableEscapeKey:false,
+		closeOnBgClick:false,
+		showCloseBtn:true,
+		closeBtnInside:true
 	});
 }	
 
