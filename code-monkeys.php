@@ -2,11 +2,14 @@
 	/*
 		Pay banana get Monkeys  to work!
 	*/
+	
 	class  CodeMonkeys
 	{
 		private $works;
 		private $data;
 		private $info = [ ];
+		private $messageCounter = 0;
+		private $tagCapacity = 10;
 
 		function __construct($post_data) {
 			$this->works = $post_data['query'];
@@ -48,12 +51,86 @@
 			return $result;
 		}
 		
-		public function getCategoryFromAccount($account){
+		public function getCategoryByAccount($account){
 			$query = 'SELECT DISTINCT P.category FROM Products AS P INNER JOIN  Map_Picture_Product AS MP 
 								ON P.sku = MP.sku AND MP.account_id in  (SELECT id FROM Accounts WHERE "'.$account.'" = account COLLATE NOCASE ) ';
 			$this->searchDB($query,'category_list','No Category');
 		}
 		
+		public function getTagCapacity(){
+			$this->info['tagCapacity'] = array('value' => $this->tagCapacity);
+			return $this->tagCapacity;
+		} 
+		
+		public function getTagQuantity($sku){
+			$query = 'SELECT COUNT(MTP.tag_id) AS counter FROM Map_Tag_Product AS MTP INNER JOIN Products AS P  ON 
+								MTP.sku  = P.sku AND MTP.sku = "'.$sku.'" COLLATE NOCASE'; 
+			
+			$db = new SQLite3('code-rainbow.db');
+			$result = $db->querySingle($query);
+			return $result;			
+		}
+		
+		public function addTag($sku,$tagData){
+			$tq = $this->getTagQuantity($sku);
+			$tc =  $this->getTagCapacity();
+			$result = ($tq+1 <= $tc);
+			
+			$this->info['debug'] = array('tq' => $tq , 'tc' => $tc , 'result' => $result );
+			
+			if($this->getTagQuantity($sku)+1 <= $this->getTagCapacity() ){
+				$db = new SQLite3('code-rainbow.db');
+				$result = $db->querySingle('SELECT id FROM Tags WHERE "'.$tagData.'" = data');
+				$msg;
+				
+				if(isset($result)){
+					$this->insertMapTagProduct($sku,$result);
+				}
+				else {
+					$tagMeta = "tag";
+					$stmt = $db->prepare('INSERT INTO Tags (data,meta) values (:data,:meta)');
+					$stmt->bindParam(':data',$tagData,SQLITE3_TEXT);
+					$stmt->bindParam(':meta',$tagMeta,SQLITE3_TEXT);								
+					$stmt->execute();	
+					$lastInsertRowID = $db->lastInsertRowID();
+					$msg = $db->lastErrorMsg();
+
+					$this->info['info'][++$this->messageCounter] = array('code' => 'SUCCESS', 'message' =>'Insert Tag "'.$tagData.'" Successed !');
+					
+					/*$this->info['add_tag'][0] = array('data' => 'test-hello', 'id' =>7788);
+					$this->info['add_tag'][1] = array('data' => 'test-wtf', 'id' =>5566);*/
+					$this->insertMapTagProduct($sku,$lastInsertRowID);
+				}				
+				
+				if($msg !== "not an error"){
+					$this->info['exec'] = array('status' => 'FAILED' , 'message' => $db->lastErrorMsg() );
+				}
+				else {$this->info['exec'] = array('status' => 'SUCCESS' , 'message' => "Seems okay bro !" ); }
+			}
+			else { $this->info['exec'] = array('status' => 'FAILED' , 'message' => "Tag Capacity is Full !!!" ); }
+		}
+		
+		public function insertMapTagProduct($sku,$tagID){
+			$db = new SQLite3('code-rainbow.db');
+			$stmt = $db->prepare('INSERT INTO Map_Tag_Product (sku  , tag_id) values (:sku,:tid)');
+			$stmt->bindParam(':sku',$sku,SQLITE3_TEXT);
+			$stmt->bindParam(':tid',$tagID,SQLITE3_INTEGER);
+			$stmt->execute();			
+			$stmt->close();			
+			
+			/*if($db->changes()>0){echo json_encode(array('code' => 'SUCCESS', 'message' =>"Map Tag Successed !"));}
+			else{echo json_encode(array('code' => 'ERROR', 'message' =>"Map Tag Error!!!"));}*/
+			$this->info['info'][++$this->messageCounter] = array('code' => 'SUCCESS', 'message' =>'Map "'.$sku.'" Successed !');
+			//return $db->lastInsertRowID();
+		}
+		
+		public function getTagsBySku($sku){
+			$query = 'SELECT T.data , T.id  FROM Tags AS T join  Map_Tag_Product AS MTP
+								ON T.id = MTP.tag_id
+								AND  MTP.sku = "'.$sku.'"  COLLATE NOCASE';
+								
+			$this->searchDB($query,'get_tags_by_sku','Not found any tags from the product!');		
+		}
 		
 		public function getTagCloud($category,$account){
 			$ca ="";
@@ -97,7 +174,7 @@
 					$i++;
 				}
 			}
-			else{ if($error_msg!=false) die( json_encode(array('message' => 'ERROR', 'code' =>$error_msg))); }
+			else{ if($error_msg!=false) die( json_encode(array('code' => 'ERROR', 'message' =>$error_msg))); }
 		}
 		
 		public function searchDBDebug($query,$array_key,$error_msg){
@@ -105,7 +182,7 @@
 			$db = new SQLite3('code-rainbow.db');
 			$result = $db->query($query);
 			
-			die( json_encode(array('message' => 'ERROR', 'code' => '◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣'.$query." ".$error_msg)));
+			die( json_encode(array('code' => 'ERROR', 'message' => '◢▆▅崩▄▃▂╰(〒皿〒)╯▂▃▄潰▅▇◣'.$query." ".$error_msg)));
 		}
 		
 		public function outputJSON(){
@@ -121,12 +198,24 @@
 				$this->refreshProductList($_POST['selectedAccount'],$_POST['displayLimit'],$_POST['category'],$_POST['searchTag']);
 			}
 			else if($this->works==='get_category'){
-				$this->getCategoryFromAccount($_POST['selectedAccount']);
+				$this->getCategoryByAccount($_POST['selectedAccount']);
 			}
 			else if($this->works === 'get_tag_cloud'){
 				$this->getTagCloud($_POST['category'],$_POST['selectedAccount']);
 			}
-			else{echo json_encode(array('message' => 'ERROR', 'code' => $_POST['query']));	}
+			else if($this->works === 'add_tag' ){
+				$this->addTag($_POST['sku'],$_POST['tagData']);
+				if($this->info['exec']['status'] !== "FAILED" ){
+					$this->getTagsBySku($_POST['sku']);
+				}
+				
+			}
+			else if($this->works === 'get_tags_by_sku' ) {
+				$this->getTagsBySku($_POST['sku']);
+			}
+			else if($this->works === 'get_tag_quota_info'){
+				$this->getTagQuotaInfo($_POST['sku']);
+			}
 			
 			$this->outputJSON();
 		}

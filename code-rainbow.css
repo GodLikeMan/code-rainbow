@@ -1,4 +1,3 @@
-<style>
 	/* 
 		#7FDED1	light green
 		#6BD0BE green 
@@ -6,11 +5,15 @@
 	
 	body { font-family : 'Roboto', sans-serif ; background : #ebebeb ;} 
 	.warning { text-align : center ;}
+	
 	nav .form-control:focus { border-color : #7FDED1 ;  }
 	nav .form-control { color: #fff ; background-color: #6BD0BE;}
 	nav .form-control::-moz-placeholder {color: rgba(255,255,255,0.8);}
 	nav .form-control:-ms-input-placeholder {color: rgba(255,255,255,0.8);}
 	nav .form-control::-webkit-input-placeholder {color: rgba(255,255,255,0.8);}
+	.navbar-nav .bootstrap-select { margin-bottom : 0px ; margin-top : 8px ;} 
+	.navbar-inner { padding : 5px 0; }
+	
 	#nav-search  input { display : inline-block ;} 
 	#tag-cloud {  text-transform : capitalize ;}
 	#tag-cloud h4 {  display : inline-block ; margin-right : 5px ; cursor : pointer ;}
@@ -18,6 +21,14 @@
 	.product-picture { margin-top : 10px ;} 
 	.mfp-close-btn-in .mfp-close { color : red ; }
 	.mfp-close { float : right ; position : inherit ; font-size : 44px ; width : 35px ; height : 35px ; line-height : 35px ;} 
+	.content-wrapper { margin-top : 65px; }
+	#item-display { float : left ;}
+	.image-container {margin:10px 0px;padding:1px;float:left ; display:inline-block;}
+	.image-attribute {margin-left : 15px; }
+	.image-folder-name , .image-attribute-row {background : #6BD0BE ;color : white;  display:block; text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+	.image-folder-name { font-size : 18px; text-transform: uppercase ;}
+	.image-attribute-row  { font-size : 15px ; }
+	.cover-image { width:100% ; height : 200px ; margin : 0 auto;}
 	
 	/*
 		button
@@ -51,19 +62,16 @@
 		border-color: #6BD0BE;
 	}
 	
-	.navbar-inner { padding : 5px 0; }
-	.content-wrapper { margin-top : 65px; }
-	.navbar-nav .bootstrap-select { margin-bottom : 0px ; margin-top : 8px ;} 
-	.image-container {margin:10px 0px;padding:1px;float:left ; display:inline-block;}
-	.image-attribute {margin-left : 15px; }
-	.image-folder-name , .image-attribute-row {background : #6BD0BE ;color : white;  display:block; text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
-	.image-folder-name { font-size : 18px; text-transform: uppercase ;}
-	.image-attribute-row  { font-size : 15px ; }
-	.cover-image { width:100% ; height : 200px ; margin : 0 auto;}
+	/* Edit Page*/
+	#edit-area { width : 100% ; max-height : 600px ; display : none ; background : #ddd ; padding : 20px ;}
+	#itemTags ul li { list-style-type : none ; margin-bottom : 8px ;}
+	#itemTags ul { padding : 0 ;}
+	.mfp-content .jumbotron { padding-top : 10px ;  }
+	#edit-tag-form { margin-bottom : 40px ;}
+	
 	@media screen and (max-width: 767px) {
 		/* 如果使用者之視窗寬度 小於等於 768px，將會再載入這裡的 CSS。    */
 		.cover-image {height:auto;}
 		.content-wrapper {width : 100% ; margin-top : 132px ;}
 		navbar .bootstrap-select.btn-group:not(.input-group-btn), .bootstrap-select.btn-group[class*=span], .bootstrap-select.btn-group[class*=col-] { margin : 0 auto;}
 	}
-</style>

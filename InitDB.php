@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html>
-	<body>
 <?php
 	class RainbowDatabase {
 		
@@ -242,5 +239,3 @@
 	$rainbowDB->importCSVToDatabase("DB_IMPORT.csv");
 		
 ?>
-	</body>
-</html>

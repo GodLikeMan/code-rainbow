@@ -15,8 +15,8 @@ function refreshList(json){
 	proceedHtml ="";
 	$("#item-display").empty();
 	
-	if(p['message']=='ERROR'){ 
-		console.log(p['code']);
+	if(p['code']=='ERROR'){ 
+		console.log(p['message']);
 		proceedHtml = '<h1 class="warning">'+p['code']+'</h1>';
 	}
 	else {
@@ -44,8 +44,7 @@ function refreshList(json){
 		event: "scrollstop"
 	});
 	
-	$(".editItemAjax").magnificPopup({/*
-		items:{src:'editItem.php?test=ok'},type:'iframe'*/
+	$(".editItemAjax").magnificPopup({
 		type:'ajax',
 		enableEscapeKey:false,
 		closeOnBgClick:false,
@@ -71,8 +70,8 @@ function createTagCloud(json){
 	var	p = $.parseJSON(json);
 	var  tagCloudHTML= "";
 	
-	if(p['message']=='ERROR'){ 
-		console.log(p['code']);
+	if(p['code']=='ERROR'){ 
+		console.log(p['message']);
 		tagCloudHTML = '<h1 class="warning">'+p['code']+'</h1>';
 	}
 	else {
@@ -99,9 +98,9 @@ function refreshCategorySelector(){
 	}).done(function(json){
 		var	p = $.parseJSON(json);
 		
-		if(p['message']=='ERROR'){ 
+		if(p['code']=='ERROR'){ 
 			$('#category-select').selectpicker('hide');
-			console.log(p['code']);
+			console.log(p['message']);
 		}
 		else {
 			$('#category-select').append('<option value="all">All Category</option>');
@@ -223,13 +222,4 @@ $(document).ready(function(){
 		return false;
 
 	});
-	/*
-	//trigger the edit area
-	$("#item-display").on('click','.image-container',function() {
-		console.log("oooo");
-	});
-	
-	*/
-
-	
 });
