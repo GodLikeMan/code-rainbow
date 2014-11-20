@@ -13,7 +13,6 @@
 	nav .form-control::-webkit-input-placeholder {color: rgba(255,255,255,0.8);}
 	.navbar-nav .bootstrap-select { margin-bottom : 0px ; margin-top : 8px ;} 
 	.navbar-inner { padding : 5px 0; }
-	
 	#nav-search  input { display : inline-block ;} 
 	#tag-cloud {  text-transform : capitalize ;}
 	#tag-cloud h4 {  display : inline-block ; margin-right : 5px ; cursor : pointer ;}
@@ -64,10 +63,12 @@
 	
 	/* Edit Page*/
 	#edit-area { width : 100% ; max-height : 600px ; display : none ; background : #ddd ; padding : 20px ;}
-	#itemTags ul li { list-style-type : none ; margin-bottom : 8px ;}
+	#itemTags ul li { list-style-type : none ; margin-bottom : 8px ; font-size : 18px ; overflow : auto ;}
 	#itemTags ul { padding : 0 ;}
 	.mfp-content .jumbotron { padding-top : 10px ;  }
-	#edit-tag-form { margin-bottom : 40px ;}
+	#itemTags { height : auto ;}
+	.tag-list-item:hover { background : aliceblue ;}
+
 	
 	@media screen and (max-width: 767px) {
 		/* 如果使用者之視窗寬度 小於等於 768px，將會再載入這裡的 CSS。    */

@@ -18,9 +18,25 @@ $("#end-edit-tag").on('click',function(){
 	$("#tag-display-area").toggle();	
 });
 
-$(".tag-list-item").on("click",function(){
-	refreshProgressBar("tagCapacityBar",-10);
+$(".tag-list-item-control").on("click",function(){
+	$.ajax({	type :	'POST',
+					url	:	"code-monkeys.php",
+					async : true,
+					data : {'sku':$("#editSku").val(),'tagId': $(this).data("tagId"),'query':'delete_tag'},
+					beforeSend:function() {
+						console.log("loading");
+					}				
+				}
+	).done(function(jsonString){
+		console.log(json);
+		var	json = $.parseJSON(jsonString);
+		if( checkExecutionStatus(json)){
+			refreshProductTags(json);
+			refreshProgressBar("tagCapacityBar",-10);			
+		}
+	});	
 });
+
 
 function refreshProgressBar( targetId ,  value ) {
 	var id = '#'+targetId;

@@ -110,11 +110,11 @@
 			else { $this->info['exec'] = array('status' => 'FAILED' , 'message' => "Tag Capacity is Full !!!" ); }
 		}
 		
-		public function insertMapTagProduct($sku,$tagID){
+		public function insertMapTagProduct($sku,$tagId){
 			$db = new SQLite3('code-rainbow.db');
 			$stmt = $db->prepare('INSERT INTO Map_Tag_Product (sku  , tag_id) values (:sku,:tid)');
 			$stmt->bindParam(':sku',$sku,SQLITE3_TEXT);
-			$stmt->bindParam(':tid',$tagID,SQLITE3_INTEGER);
+			$stmt->bindParam(':tid',$tagId,SQLITE3_INTEGER);
 			$stmt->execute();			
 			$stmt->close();			
 			
@@ -148,6 +148,18 @@
 			'.$ca.' ORDER BY RANDOM() LIMIT 10 ';
 
 			$this->searchDB($query,'tag_cloud','Not found any tags !');
+		}
+		
+		public function deleteTag($sku,$tagId){ 
+		
+			$db = new SQLite3('code-rainbow.db');
+			
+			$result = $db->exec('DELETE FROM Map_Tag_Product WHERE sku = "'.$sku.'" AND tag_id ='.$tagId.' COLLATE NOCASE' );
+			
+			if($result ){
+				$this->info['exec'] = array('status' => 'SUCCESS' , 'message' => "Seems okay bro !" ); 
+			}
+			else {$this->info['exec'] = array('status' => 'FAILED' , 'message' => $db->lastErrorMsg() );}
 		}
 		
 		public function saveToDB($query,$array_key,$error_msg){
@@ -215,6 +227,13 @@
 			}
 			else if($this->works === 'get_tag_quota_info'){
 				$this->getTagQuotaInfo($_POST['sku']);
+			}
+			else if($this->works === 'delete_tag'){
+				$this->deleteTag($_POST['sku'],$_POST['tagId']);
+				if($this->info['exec']['status'] !== "FAILED" ){
+					 $this->getTagCapacity();
+					$this->getTagsBySku($_POST['sku']);
+				}
 			}
 			
 			$this->outputJSON();
