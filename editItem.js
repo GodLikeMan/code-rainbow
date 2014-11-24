@@ -2,6 +2,9 @@ $("img.lazy").lazyload({
 	effect: "fadeIn",
 	event: "scrollstop"
 });
+
+//temp 
+$(".tag-list-item-control").on("click",deleteTag);
 	
 $(".edit-tag").on("click",function(){
 	console.log("hello world!");
@@ -18,7 +21,8 @@ $("#end-edit-tag").on('click',function(){
 	$("#tag-display-area").toggle();	
 });
 
-$(".tag-list-item-control").on("click",function(){
+function deleteTag(){
+	$.cookie('prevDelTag',$(this).data("tagData"));
 	$.ajax({	type :	'POST',
 					url	:	"code-monkeys.php",
 					async : true,
@@ -28,15 +32,18 @@ $(".tag-list-item-control").on("click",function(){
 					}				
 				}
 	).done(function(jsonString){
-		console.log(json);
+		console.log(jsonString);
 		var	json = $.parseJSON(jsonString);
 		if( checkExecutionStatus(json)){
+			$("#edit-iem-message").html(alertInfo('success','<strong>'+$.cookie('prevDelTag')+'</strong> tag delete success !'));
 			refreshProductTags(json);
 			refreshProgressBar("tagCapacityBar",-10);			
 		}
-	});	
-});
-
+		else {
+			$("#edit-iem-message").html(alertInfo('danger','<strong>'+$.cookie('prevDelTag')+'</strong> tag delete failed !'));
+		}
+	});		
+}
 
 function refreshProgressBar( targetId ,  value ) {
 	var id = '#'+targetId;
@@ -51,7 +58,7 @@ function refreshProgressBar( targetId ,  value ) {
 	}
 }
 
-//Add new Tags on Product
+//Add new Tags on Product  //have to rewrite
 $("#edit-tag-form").on('submit',function(event){
 	event.preventDefault();
 	
@@ -66,65 +73,61 @@ $("#edit-tag-form").on('submit',function(event){
 					}				
 				}
 	).done(function(jsonString){
-		//console.log(json);
+		
 		var	json = $.parseJSON(jsonString);
 		if( checkExecutionStatus(json)){
+		
+			$("#edit-iem-message").html(alertInfo('success','<strong>'+$("#tagDataInput").val()+'</strong> tag add success !'));
 			refreshProductTags(json);
 			refreshProgressBar("tagCapacityBar",10);
 			$("#edit-tag-form").trigger("reset");
+			
+			
 			outputInfo(json);
 		}
 
 	});
 });
 
-function checkExecutionStatus(json){
-	if(json.exec.status === "FAILED" ){
-		console.log(json.exec.message);
-		return false;
-	}
-	else if(json.exec.status === "SUCCESS" ){
-		return true;
-	}
-}
-
-function outputInfo(json){
-	if (json.info !== undefined){
-		for(var i = 1 ; i <= Object.keys(json.info).length ; i++){
-			console.log("code="+json.info[i].code+"  message="+json.info[i].message);
-		}
-	}
-}
-
 /* Rewrite json comunications */
 function refreshProductTags(json){
+	console.log(json);
 	proceedHtml ="";
 	tagNum=0;
-
-	console.log(json);
-	console.log(json.info);
-	console.log(json.exec);
-
-
+	tagType ="";
+	
 	for(var i = 0 ; i <Object.keys(json['get_tags_by_sku']).length;i++){
-		proceedHtml += '<li class="tag-list-item tag-id-'+json["get_tags_by_sku"][i].id+'"><h4><span class="label label-primary"><i class="fa fa-arrows"></i> '+ json["get_tags_by_sku"][i].data+'</span></h4></li>';
+		if(json['get_tags_by_sku'][i].meta === 'tag' || json['get_tags_by_sku'][i].meta === undefined ){
+			tagType = 'label-info';
+		}
+		else { tagType = 'label-primary'; }
+		proceedHtml += '<li class="tag-list-item col-xs-12"><span class="label '+tagType+'">'+ json["get_tags_by_sku"][i].data+'</span><button class="tag-list-item-control pull-right" type="button" data-tag-id="'+ json["get_tags_by_sku"][i].id+'" data-tag-data="'+ json["get_tags_by_sku"][i].data+'" ><i class="fa fa-times"></i></button></li>';
 		tagNum++;	
 	}
 	
-	if(tagNum === json.tagCapacity.value ){
+	if(tagNum >= json.tagCapacity.value ){
 		console.log(tagNum);
 		console.log(json.tagCapacity.value);
 		$(".tagInputSet").hide();
 		$(".tagInputSet input , .tagInputSet button").attr('disabled','disabled');
 	}
+	else{
+		$(".tagInputSet").show();
+		$(".tagInputSet input , .tagInputSet button").removeAttr("disabled"); 
+	}
 	
 	$(".tag-list-item").remove();
 	$("#tag-list-header").after(proceedHtml);
-	
+	$(".tag-list-item-control").on("click",deleteTag);
 }
 
 $("#exit").on('click',function(){
 	var magnificPopup = $.magnificPopup.instance;
 	magnificPopup.close();
 });
+
+function alertInfo(type,message){
+	alert = '<div class="alert alert-'+type+' alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>'+message+'</div>';
+	return alert;
+}
 

@@ -125,7 +125,7 @@
 		}
 		
 		public function getTagsBySku($sku){
-			$query = 'SELECT T.data , T.id  FROM Tags AS T join  Map_Tag_Product AS MTP
+			$query = 'SELECT T.data , T.meta , T.id  FROM Tags AS T join  Map_Tag_Product AS MTP
 								ON T.id = MTP.tag_id
 								AND  MTP.sku = "'.$sku.'"  COLLATE NOCASE';
 								
@@ -154,12 +154,20 @@
 		
 			$db = new SQLite3('code-rainbow.db');
 			
-			$result = $db->exec('DELETE FROM Map_Tag_Product WHERE sku = "'.$sku.'" AND tag_id ='.$tagId.' COLLATE NOCASE' );
+			$check = $db->querySingle('SELECT meta FROM Tags WHERE "'.$tagId.'" = id');
 			
-			if($result ){
-				$this->info['exec'] = array('status' => 'SUCCESS' , 'message' => "Seems okay bro !" ); 
+			if($check ===  NULL || $check === "tag"){
+			
+				$result = $db->exec('DELETE FROM Map_Tag_Product WHERE sku = "'.$sku.'" AND tag_id ='.$tagId.' COLLATE NOCASE' );		
+				if($result ){
+					$this->info['exec'] = array('status' => 'SUCCESS' , 'message' => "Tag Deleted" ); 
+				}
+				else {$this->info['exec'] = array('status' => 'FAILED' , 'message' => $db->lastErrorMsg() );}			
+				
 			}
-			else {$this->info['exec'] = array('status' => 'FAILED' , 'message' => $db->lastErrorMsg() );}
+			else{
+				$this->info['exec'] = array('status' => 'FAILED' , 'message' => "Can't Modify System Tag!" );
+			}
 		}
 		
 		public function saveToDB($query,$array_key,$error_msg){

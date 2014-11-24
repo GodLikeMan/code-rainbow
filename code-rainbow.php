@@ -47,7 +47,7 @@
 		</nav>
 		<div class="container content-wrapper">
 			<div id ="tag-cloud"></div>
-			<div id="item-display"></div>
+			<div id="item-display" class="row"></div>
 		</div>
 		<script >initializer();</script>
 	</body>

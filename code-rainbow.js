@@ -29,11 +29,11 @@ function refreshList(json){
 		
 			var fDate = formatDate(p['refreshed_list'][i].last_modify_date*1000);
 			var editItemHref = 'editItem.php?test=ok&sku='+p['refreshed_list'][i].sku+'&account='+$.cookie("selectedAccount")+'&category='+$.cookie('category')+'&searchTag='+$.cookie('searchTag');
-			proceedHtml +=	'<a class="editItemAjax" href="'+editItemHref+'"><div class="image-container col-xs-12  col-sm-3 col-md-2">'+
-						'<img class="cover-image lazy"  data-original="http://sokietech.com/ebayimages/'+file+'"/ >'+	
+			proceedHtml +=	'<div class="image-container col-xs-12  col-sm-3 col-md-2"><a class="editItemAjax" href="'+editItemHref+'">'+
+						'<img class="cover-image lazy"  data-original="http://sokietech.com/ebayimages/'+file+'"/ ></a>'+	
 						'<div class="image-folder-name"><span class="image-attribute">'+p['refreshed_list'][i].sku+'</span></div>'+
 						'<div class="image-attribute-row"><span class="image-attribute">'+Math.round(p['refreshed_list'][i].size/(1024))+' KB </span><span class="image-attribute">'+fDate+'</span></div>'+
-						'</div></a>';	
+						'</div>';	
 		}
 		console.log("Refresh successed : "+"/selectedAccount/-> "+$.cookie('selectedAccount')+" /category/-> "+$.cookie('category')+" /searchTag/->"+$.cookie("searchTag")+" /limit/->"+$.cookie("displayLimit"));					
 	}
@@ -72,7 +72,7 @@ function createTagCloud(json){
 	
 	if(p['code']=='ERROR'){ 
 		console.log(p['message']);
-		tagCloudHTML = '<h1 class="warning">'+p['code']+'</h1>';
+		tagCloudHTML = '';
 	}
 	else {
 		for(var i = 0;i<p['tag_cloud'].length;i++){
@@ -168,6 +168,24 @@ function initializer(){
 	//init items
 	refreshCategorySelector();
 	refreshListAjax();
+}
+
+function checkExecutionStatus(json){
+	if(json.exec.status === "FAILED" ){
+		console.log(json.exec.message);
+		return false;
+	}
+	else if(json.exec.status === "SUCCESS" ){
+		return true;
+	}
+}
+
+function outputInfo(json){
+	if (json.info !== undefined){
+		for(var i = 1 ; i <= Object.keys(json.info).length ; i++){
+			console.log("code="+json.info[i].code+"  message="+json.info[i].message);
+		}
+	}
 }
 
 $(document).ready(function(){
