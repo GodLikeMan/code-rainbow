@@ -13,7 +13,7 @@
 <div class="container">
 	<button title="Close (Esc)" type="button" class="mfp-close">×</button>
 	<div class="jumbotron">
-		<div class="row"><h2 class="text-uppercase col-xs-12"><i class="fa fa-coffee"></i> <?php echo $_GET['sku']; ?></h2></div>
+		<div class="row"><h2 class="text-uppercase col-xs-12 product-page-title"><i class="fa fa-coffee"></i> <?php echo $_GET['sku']; ?></h2></div>
 		<div  class="row">
 			<div id = "itemTags" class="col-xs-12">
 				<div id="edit-area" class="clearfix">
@@ -56,11 +56,15 @@
 			</div>
 		</div>
 		<div id = "product-pictures" class="row">
-				<?php 
-					for($i=1;$i<=3;$i++){
-						echo '<img class="lazy col-xs-6  col-sm-3  product-picture" src="http://sokietech.com/ebayimages/'.$_GET['account']."/".$_GET['sku']."/".$i.'.jpg">';
-					}
-				?>
+			<?php 
+				for($i=1;$i<=3;$i++){
+					echo '<div class="col-xs-12 col-sm-4"><img class="lazy product-picture" src="http://sokietech.com/ebayimages/'.$_GET['account']."/".$_GET['sku']."/".$i.'.jpg">';
+					echo '<select  class="selectpicker picture-number"  data-style="btn-green" data-width="100%">
+					<option >1</option><option>2</option><option>3</option><option>Delete</option>
+					</select>';
+					echo '</div>';
+				}
+			?>
 		</div>
 		<?php //echo '<div class="text-center">Debug Info : '.$_GET['account'].' / '.$_GET['category'].' / '.$_GET['searchTag'].'</div>'; ?>
 		<?php echo '<div class="text-center"><button id="exit" class="btn btn-default" type="button"><i class="fa fa-caret-square-o-up"></i> Exit</button></div>'; ?>

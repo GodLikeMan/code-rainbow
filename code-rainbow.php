@@ -48,6 +48,14 @@
 		<div class="container content-wrapper">
 			<div id ="tag-cloud"></div>
 			<div id="item-display" class="row"></div>
+			
+			<div class="upload-drop-zone" id="drop-zone">
+				<b><i class="fa fa-cloud-upload"></i></b>
+			</div>
+			<form action="/file-upload"  role="form"  class="hidden">
+				<input id="file-uploader"  name="file" type="file" />
+			</form>
+			
 		</div>
 		<script >initializer();</script>
 	</body>

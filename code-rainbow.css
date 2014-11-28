@@ -5,7 +5,7 @@
 	
 	body { font-family : 'Roboto', sans-serif ; background : #ebebeb ;} 
 	.warning { text-align : center ;}
-	
+	nav .container {padding:0;}
 	nav .form-control:focus { border-color : #7FDED1 ;  }
 	nav .form-control { color: #fff ; background-color: #6BD0BE;}
 	nav .form-control::-moz-placeholder {color: rgba(255,255,255,0.8);}
@@ -17,11 +17,8 @@
 	#tag-cloud {  text-transform : capitalize ;}
 	#tag-cloud h4 {  display : inline-block ; margin-right : 5px ; cursor : pointer ;}
 	.product-tag { margin-left : 10px ;}
-	.product-picture { margin : 15px 0 ;} 
-	.mfp-close-btn-in .mfp-close { color : red ; }
-	.mfp-close { float : right ; position : inherit ; font-size : 44px ; width : 35px ; height : 35px ; line-height : 35px ;} 
-	.content-wrapper { margin-top : 65px; }
-	#item-display { width : 100% ; float : left ;}
+	.content-wrapper { padding : 0 ; margin-top : 65px; }
+	#item-display { width : 100% ; float : left ; margin : 0;}
 	.image-container {margin:10px 0px;padding: 0 5px;float:left ; display:inline-block;}
 	.image-attribute {margin-left : 15px; }
 	.image-folder-name , .image-attribute-row {background : #6BD0BE ;color : white;  display:block; text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
@@ -66,10 +63,21 @@
 	#edit-area { width : 100% ; max-height : 600px ; display : none ; background : #ddd ; padding : 20px ;}
 	#itemTags ul li { list-style-type : none ; margin-bottom : 8px ; font-size : 18px ; overflow : auto ;}
 	#itemTags ul { padding : 0 ;}
-	.mfp-content .jumbotron { padding-top : 10px ;  }
+	.mfp-content .jumbotron { padding-top : 10px ;  padding-bottom : 10px ; margin-bottom : 3px ;}
 	#itemTags { height : auto ;}
 	.tag-list-item:hover { background : #fff ;}
 	.tag-list-item-control { color : #7FDED1 ; background : #fff ;}
+	#product-pictures { margin-top : 15px ; margin-bottom : 15px ;}
+	.product-picture { margin : 0 ; width : 100% ; height : auto ;} 
+	.mfp-close-btn-in .mfp-close { color : red ; }
+	.mfp-close { float : right ; position : inherit ; font-size : 44px ; width : 35px ; height : 35px ; line-height : 35px ;} 
+	.product-page-title { margin-top : 0 ;} 
+	
+	/*upload*/
+	#drop-zone {}
+	.upload-drop-zone {color: #ccc;border-style: dashed;border-color: #ccc;text-align: center;height: 200px;border-width: 2px;clear:both;}
+	.upload-drop-zone.drop {color: #222;border-color: #222;}
+	.upload-drop-zone b { font-size : 110px;}
 	
 	@media screen and (max-width: 767px) {
 		/* 如果使用者之視窗寬度 小於等於 768px，將會再載入這裡的 CSS。    */

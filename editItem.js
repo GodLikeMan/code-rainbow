@@ -1,3 +1,12 @@
+if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+	$('.selectpicker').selectpicker('mobile');
+}
+else{
+	$('.selectpicker').selectpicker();
+
+}
+
+
 $("img.lazy").lazyload({
 	effect: "fadeIn",
 	event: "scrollstop"

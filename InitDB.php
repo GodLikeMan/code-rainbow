@@ -230,12 +230,17 @@
 		}
 	
 	}
-		
+	
+	echo "----------------------- DB INIT START -------------------------<br/>";
+	$start = (float) array_sum(explode(' ',microtime()));
+	
 	$acc = ['alvoturk9000','3amotor_com','d2_sport'];
 	$rainbowDB = new RainbowDatabase('code-rainbow.db');
 	$rainbowDB->resetDatabase();
 	$rainbowDB->importAccounts($acc);
 	$rainbowDB->scanPicturesToDatabase($acc);
 	$rainbowDB->importCSVToDatabase("DB_IMPORT.csv");
-		
+	
+	$end = (float) array_sum(explode(' ',microtime()));
+	echo "<br/>-------------------  COMPLETED in:". sprintf("%.4f", ($end-$start))." seconds ------------------<br/>";	
 ?>

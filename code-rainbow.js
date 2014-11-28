@@ -139,7 +139,8 @@ function refreshCategorySelector(){
 		$('.selectpicker').selectpicker();
 		console.log("Desktop mode");
 	}
-	$('.selectpicker').selectpicker('setStyle', 'btn-lg', 'add');
+	//$('.selectpicker').selectpicker('setStyle', 'btn-lg', 'add');
+	//$('.selectpicker').selectpicker('setStyle', 'hidden', 'add');
 }
 
 function formatDate(timestamp){
@@ -189,7 +190,31 @@ function outputInfo(json){
 }
 
 $(document).ready(function(){
+	
+	//dropzone test
+	$("#drop-zone").on("dragover",function(event){
+		event.preventDefault();
+        $("#drop-zone").addClass('drop');
+	});
+	
+	$("#drop-zone").on("dragleave",function(event){
+		event.preventDefault();
+        $("#drop-zone").removeClass('drop');
+	});		
 
+	$("#drop-zone").on("drop",function(event){
+		event.preventDefault();
+        $("#drop-zone").removeClass('drop');
+		console.log(event.originalEvent.dataTransfer.files);
+	});	
+	
+	
+	/* Buggy as fuck*/
+	$(".upload-drop-zone").on("click",function(){
+		console.log("???");
+        $("#file-uploader").trigger('click');
+	});
+	
 	//
 	$("#category-select").on("change",function(){
 		if($.cookie('selectedAccount') == "alvoturk9000"){
